@@ -1,6 +1,6 @@
 # asn1
 
-This is a minor fork of the `encoding/asn1` package. It adds in two tags for unmarshaling TLV data into structs:
+This is a minor fork of the `encoding/asn1` package. It adds in two tags for TLV data into structs:
 
 - `littleendian` for little endian data
 - `class` for explicit specification of expected class of tag (see [wiki article](https://en.wikipedia.org/wiki/X.690) for more details).
@@ -37,5 +37,15 @@ func main() {
     fmt.Println(string(info.FirmwareVersion))
     fmt.Println(string(info.SerialNumber))
     fmt.Println(string(info.PartNumber))
+
+    marshaledBytes, err := Marshal(info)
+
+    if err != nil {
+        panic(err)
+    }
+
+    if hex.EncodeToString(marshaledBytes) != byteString {
+        panic("Remarshaling did not match\n%s\n%s", byteString, hex.EncodeToString(marshaledBytes))
+    }
 }
 ```

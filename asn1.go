@@ -1037,15 +1037,6 @@ func setDefaultValue(v reflect.Value, params fieldParameters) (ok bool) {
 	return
 }
 
-// reverseByteArray reverses a byte array
-func reverseByteArray(b []byte) []byte {
-	result := make([]byte, len(b))
-	for i := 0; i < len(b); i++ {
-		result[len(b)-1-i] = b[i]
-	}
-	return result
-}
-
 // Unmarshal parses the DER-encoded ASN.1 data structure b
 // and uses the reflect package to fill in an arbitrary value pointed at by val.
 // Because Unmarshal uses the reflect package, the structs

@@ -1130,18 +1130,20 @@ func TestBMPString(t *testing.T) {
 	}
 }
 
-func Test(t *testing.T) {
+func TestNewTags(t *testing.T) {
 	type Info struct {
-		FirmwareVersion    []byte `asn1:"tag:64,class:1"`
-		SerialNumber       []byte `asn1:"tag:65,class:1"`
-		PartNumber         []byte `asn1:"tag:66,class:1"`
-		AccelSampleRate    int    `asn1:"tag:67,class:1,littleendian"`
-		MagsenseSampleRate int    `asn1:"tag:68,class:1,littleendian"`
-		AccelFFTSize       int    `asn1:"tag:69,class:1,littleendian"`
-		MagsenseFFTSize    int    `asn1:"tag:70,class:1,littleendian"`
+		A string `asn1:"utf8,tag:64,class:1"`
+		B string `asn1:"utf8,tag:65,class:1"`
+		C string `asn1:"utf8,tag:66,class:1"`
+		D int    `asn1:"tag:67,class:1,littleendian"`
+		E int    `asn1:"tag:68,class:1,littleendian"`
+		F int    `asn1:"tag:69,class:1,littleendian"`
+		G int    `asn1:"tag:70,class:1,littleendian"`
 	}
 
-	bytes, _ := hex.DecodeString("305c" + "5f402373696c766572676c6164652f6663635f76302e302e322d37342d6736636639636134005f410e554e494e495449414c495a4544005f420e554e494e495449414c495a4544005f430200195f440220035f450200085f46028000")
+	byteString := "305c" + "5f402373696c766572676c6164652f6663635f76302e302e322d37342d6736636639636134005f410e554e494e495449414c495a4544005f420e554e494e495449414c495a4544005f430200195f440220035f450200085f46028000"
+
+	bytes, _ := hex.DecodeString(byteString)
 
 	var info Info
 
@@ -1149,5 +1151,15 @@ func Test(t *testing.T) {
 
 	if err != nil {
 		t.Error(err)
+	}
+
+	marshaledBytes, err := Marshal(info)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if hex.EncodeToString(marshaledBytes) != byteString {
+		t.Errorf("Remarshaling did not match\n%s\n%s", byteString, hex.EncodeToString(marshaledBytes))
 	}
 }

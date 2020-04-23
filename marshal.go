@@ -48,6 +48,22 @@ func (b bytesEncoder) Encode(dst []byte) {
 	}
 }
 
+type littleEndianEncoder struct {
+	Encoder encoder
+}
+
+func (b *littleEndianEncoder) Len() int {
+	return b.Encoder.Len()
+}
+
+func (b *littleEndianEncoder) Encode(dst []byte) {
+	littleEncoded := make([]byte, b.Len())
+	b.Encoder.Encode(littleEncoded)
+	if copy(dst, reverseByteArray(littleEncoded)) != len(littleEncoded) {
+		panic("internal error")
+	}
+}
+
 type stringEncoder string
 
 func (s stringEncoder) Len() int {
@@ -621,6 +637,11 @@ func makeField(v reflect.Value, params fieldParameters) (e encoder, err error) {
 	t := new(taggedEncoder)
 
 	t.body, err = makeBody(v, params)
+
+	if params.littleEndian {
+		t.body = &littleEndianEncoder{t.body}
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -633,6 +654,8 @@ func makeField(v reflect.Value, params fieldParameters) (e encoder, err error) {
 			class = ClassApplication
 		} else if params.private {
 			class = ClassPrivate
+		} else if params.class != nil {
+			class = *params.class
 		} else {
 			class = ClassContextSpecific
 		}

@@ -190,3 +190,12 @@ func getUniversalType(t reflect.Type) (matchAny bool, tagNumber int, isCompound,
 	}
 	return false, 0, false, false
 }
+
+// reverseByteArray reverses a byte array
+func reverseByteArray(b []byte) []byte {
+	result := make([]byte, len(b))
+	for i := 0; i < len(b); i++ {
+		result[len(b)-1-i] = b[i]
+	}
+	return result
+}
